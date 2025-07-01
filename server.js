@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
 
-// Middleware para processar o corpo das requisições
 app.use(express.json());
 
 const users = [
@@ -21,6 +20,25 @@ app.post('/users', (req, res) => {
     const newUser = { id: users.length + 1, name };
     users.push(newUser);
     res.status(201).json(newUser);
+});
+
+app.patch('/users/:id', (req, res) => {
+    const { id } = req.params;
+    const updates = req.body;
+
+    const user = users.find(user => user.id === parseInt(id));
+
+    if (!user) {
+        return res.status(404).json({ message: 'Usuário não encontrado' });
+    }
+
+    for (const key in updates) {
+        if (user.hasOwnProperty(key)) {
+            user[key] = updates[key];
+        }
+    }
+
+    res.json(user);
 });
 
 // Método PUT - Para atualizar dados
